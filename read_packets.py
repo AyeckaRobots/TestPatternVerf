@@ -19,19 +19,19 @@ def check_test_pattern(df, tp_start_index: int) -> None:
 
 
 capture: pyshark.LiveCapture = pyshark.LiveCapture(interface="eth0") #display_filter='ip.src == 192.168.10.102'
-capture.set_debug()
-capture.sniff(packet_count=1000)
+# capture.set_debug()
+# capture.sniff(packet_count=1000)
 tp_start = 19
 
 first_capture = True
 current_df_counter = 0
-for packet in capture:
+for packet in capture.sniff_continuously():
     if 'DVB-S2_MODEADAPT' in packet:
         
         df = packet["dvb-s2_bb"].df
         new_df_counter = int("".join(df[:11].split(':')) , 16)
         new_modeadapt_counter = int(packet["dvb-s2_modeadapt"].frameno)
-        print(f'{new_df_counter}  {datetime.now()}  {len(df)//3 + 1}  {int(packet["dvb-s2_bb"].dfl)//8}')
+        # print(f'{new_df_counter}  {datetime.now()}  {len(df)//3 + 1}  {int(packet["dvb-s2_bb"].dfl)//8}')
         check_test_pattern(df, tp_start)
         
         if first_capture:
